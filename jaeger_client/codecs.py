@@ -298,7 +298,9 @@ class B3Codec(Codec):
 
     @staticmethod
     def _get_header_value_hex(carrier, header_lc_to_header_orig, header_lc):
-        header = header_lc_to_header_orig[header_lc]
+        header = header_lc_to_header_orig.get(header_lc)
+        if header is None:
+            return None
         header_value = carrier.get(header)
         if header_value is not None:
             header_value = header_to_hex(header_value)
@@ -310,7 +312,7 @@ class B3Codec(Codec):
         lowercase_keys = dict([(k.lower(), k) for k in carrier])
         trace_id = self._get_header_value_hex(carrier, lowercase_keys, self._trace_header_lc)
         span_id = self._get_header_value_hex(carrier, lowercase_keys, self._span_header_lc)
-        parend_id = self._get_header_value_hex(carrier, lowercase_keys, self._parent_span_header_lc)
+        parent_id = self._get_header_value_hex(carrier, lowercase_keys, self._parent_span_header_lc)
         if not trace_id or not span_id:
             return None
         flags = 0x00
